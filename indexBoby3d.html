@@ -83,6 +83,11 @@
         const jumpStrength = 0.3;
         let isOnPlatform = false;
 
+        // Variables pour le contrôle de la caméra avec la souris
+        let isMouseDown = false;
+        let previousMouseX = 0;
+        let previousMouseY = 0;
+
         // Écouteurs d'événements pour les touches
         document.addEventListener('keydown', (event) => {
             switch (event.code) {
@@ -128,6 +133,30 @@
                 case 'ArrowRight':
                     moveRight = false;
                     break;
+            }
+        });
+
+        // Écouteurs d'événements pour la souris
+        document.addEventListener('mousedown', () => {
+            isMouseDown = true;
+        });
+
+        document.addEventListener('mouseup', () => {
+            isMouseDown = false;
+        });
+
+        document.addEventListener('mousemove', (event) => {
+            if (isMouseDown) {
+                const deltaX = event.clientX - previousMouseX;
+                const deltaY = event.clientY - previousMouseY;
+
+                // Faire tourner la caméra autour du cube
+                camera.position.x += deltaX * 0.05;
+                camera.position.y -= deltaY * 0.05;
+
+                // Mettre à jour la position précédente de la souris
+                previousMouseX = event.clientX;
+                previousMouseY = event.clientY;
             }
         });
 
@@ -210,8 +239,6 @@
             }
 
             // Recentre la caméra sur le cube
-            camera.position.x = cube.position.x;
-            camera.position.z = cube.position.z + 10;
             camera.lookAt(cube.position);
 
             // Mettre à jour les coordonnées du cube
