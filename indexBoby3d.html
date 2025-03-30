@@ -34,7 +34,8 @@
 
         // Créer une caméra
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 5, 10); // Position initiale de la caméra, zoom sur le cube
+        const cameraDistance = 7; // Distance fixe de la caméra par rapport au cube
+        camera.position.set(0, 5, cameraDistance); // Position initiale de la caméra
         camera.lookAt(0, 1, 0); // Centrer la caméra sur le cube
 
         // Créer un renderer
@@ -151,8 +152,16 @@
                 const deltaY = event.clientY - previousMouseY;
 
                 // Faire tourner la caméra autour du cube
-                camera.position.x += deltaX * 0.05;
-                camera.position.y -= deltaY * 0.05;
+                const angleY = deltaX * 0.01;
+                const angleX = deltaY * 0.01;
+
+                // Calculer la nouvelle position de la caméra
+                const offsetX = cameraDistance * Math.sin(angleY);
+                const offsetZ = cameraDistance * Math.cos(angleY);
+
+                camera.position.x = cube.position.x + offsetX;
+                camera.position.z = cube.position.z + offsetZ;
+                camera.position.y += angleX;
 
                 // Mettre à jour la position précédente de la souris
                 previousMouseX = event.clientX;
