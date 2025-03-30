@@ -81,6 +81,7 @@
         let velocityY = 0;
         const gravity = 0.02;
         const jumpStrength = 0.3;
+        let isOnPlatform = false;
 
         // Écouteurs d'événements pour les touches
         document.addEventListener('keydown', (event) => {
@@ -108,6 +109,7 @@
                     cube.position.set(0, 0.5, 0);
                     velocityY = 0;
                     isJumping = false;
+                    isOnPlatform = false;
                     break;
             }
         });
@@ -135,6 +137,36 @@
             coordinatesDiv.innerText = `Cube Position: (${cube.position.x.toFixed(2)}, ${cube.position.y.toFixed(2)}, ${cube.position.z.toFixed(2)})`;
         }
 
+        // Fonction pour vérifier les collisions avec les plateformes
+        function checkCollisions() {
+            if (cube.position.y <= 0.5) {
+                cube.position.y = 0.5;
+                isJumping = false;
+                isOnPlatform = false;
+            } else {
+                const platforms = [platform1, platform2];
+                let onPlatform = false;
+
+                for (const platform of platforms) {
+                    if (
+                        cube.position.y <= platform.position.y + 0.6 &&
+                        cube.position.x >= platform.position.x - 2.5 &&
+                        cube.position.x <= platform.position.x + 2.5 &&
+                        cube.position.z >= platform.position.z - 2.5 &&
+                        cube.position.z <= platform.position.z + 2.5
+                    ) {
+                        if (velocityY < 0) {
+                            cube.position.y = platform.position.y + 0.6;
+                            isJumping = false;
+                            onPlatform = true;
+                        }
+                    }
+                }
+
+                isOnPlatform = onPlatform;
+            }
+        }
+
         // Boucle d'animation
         function animate() {
             requestAnimationFrame(animate);
@@ -149,29 +181,31 @@
             if (isJumping) {
                 cube.position.y += velocityY;
                 velocityY -= gravity;
+            }
 
-                // Vérifier la collision avec le sol ou les plateformes
-                if (cube.position.y <= 0.5) {
-                    cube.position.y = 0.5;
-                    isJumping = false;
-                } else if (
-                    cube.position.y <= platform1.position.y + 0.6 &&
-                    cube.position.x >= platform1.position.x - 2.5 &&
-                    cube.position.x <= platform1.position.x + 2.5 &&
-                    cube.position.z >= platform1.position.z - 2.5 &&
-                    cube.position.z <= platform1.position.z + 2.5
-                ) {
-                    cube.position.y = platform1.position.y + 0.6;
-                    isJumping = false;
-                } else if (
-                    cube.position.y <= platform2.position.y + 0.6 &&
-                    cube.position.x >= platform2.position.x - 2.5 &&
-                    cube.position.x <= platform2.position.x + 2.5 &&
-                    cube.position.z >= platform2.position.z - 2.5 &&
-                    cube.position.z <= platform2.position.z + 2.5
-                ) {
-                    cube.position.y = platform2.position.y + 0.6;
-                    isJumping = false;
+            // Vérifier les collisions
+            checkCollisions();
+
+            // Tomber des plateformes
+            if (isOnPlatform && !isJumping && velocityY === 0) {
+                const platforms = [platform1, platform2];
+                let stillOnPlatform = false;
+
+                for (const platform of platforms) {
+                    if (
+                        cube.position.x >= platform.position.x - 2.5 &&
+                        cube.position.x <= platform.position.x + 2.5 &&
+                        cube.position.z >= platform.position.z - 2.5 &&
+                        cube.position.z <= platform.position.z + 2.5
+                    ) {
+                        stillOnPlatform = true;
+                        break;
+                    }
+                }
+
+                if (!stillOnPlatform) {
+                    isOnPlatform = false;
+                    isJumping = true;
                 }
             }
 
