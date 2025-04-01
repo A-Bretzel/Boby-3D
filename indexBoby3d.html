@@ -34,8 +34,8 @@
 
         // Créer une caméra
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const cameraDistance = 7; // Distance fixe de la caméra par rapport au cube
-        camera.position.set(0, 5, cameraDistance); // Position initiale de la caméra
+        const initialCameraPosition = new THREE.Vector3(0, 5, 7); // Position initiale de la caméra
+        camera.position.copy(initialCameraPosition);
         camera.lookAt(0, 1, 0); // Centrer la caméra sur le cube
 
         // Créer un renderer
@@ -62,7 +62,11 @@
         gridHelper.position.y = 0.01; // Légèrement au-dessus du sol pour être visible
         scene.add(gridHelper);
 
-        
+        // Ajouter une lumière
+        const light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(10, 10, 10);
+        scene.add(light);
+
         // Variables pour le déplacement et le saut du cube
         let moveForward = false;
         let moveBackward = false;
@@ -72,12 +76,6 @@
         let velocityY = 0;
         const gravity = 0.02;
         const jumpStrength = 0.3;
-        let isOnPlatform = false;
-
-        // Variables pour le contrôle de la caméra avec la souris
-        let isMouseDown = false;
-        let previousMouseX = 0;
-        let previousMouseY = 0;
 
         // Écouteurs d'événements pour les touches
         document.addEventListener('keydown', (event) => {
@@ -95,7 +93,7 @@
                     moveRight = true;
                     break;
                 case 'Space':
-                    if (!isJumping) {
+                    if (!isJumping && cube.position.y <= 0.5) {
                         isJumping = true;
                         velocityY = jumpStrength;
                     }
@@ -105,7 +103,11 @@
                     cube.position.set(0, 0.5, 0);
                     velocityY = 0;
                     isJumping = false;
-                    isOnPlatform = false;
+                    break;
+                case 'KeyC':
+                    // Réinitialiser la position de la caméra
+                    camera.position.copy(initialCameraPosition);
+                    camera.lookAt(cube.position);
                     break;
             }
         });
@@ -127,45 +129,13 @@
             }
         });
 
-        // Écouteurs d'événements pour la souris
-        document.addEventListener('mousedown', () => {
-            isMouseDown = true;
-        });
-
-        document.addEventListener('mouseup', () => {
-            isMouseDown = false;
-        });
-
-        document.addEventListener('mousemove', (event) => {
-            if (isMouseDown) {
-                const deltaX = event.clientX - previousMouseX;
-                const deltaY = event.clientY - previousMouseY;
-
-                // Faire tourner la caméra autour du cube
-                const angleY = deltaX * 0.01;
-                const angleX = deltaY * 0.01;
-
-                // Calculer la nouvelle position de la caméra
-                const offsetX = cameraDistance * Math.sin(angleY);
-                const offsetZ = cameraDistance * Math.cos(angleY);
-
-                camera.position.x = cube.position.x + offsetX;
-                camera.position.z = cube.position.z + offsetZ;
-                camera.position.y += angleX;
-
-                // Mettre à jour la position précédente de la souris
-                previousMouseX = event.clientX;
-                previousMouseY = event.clientY;
-            }
-        });
-
         // Fonction pour mettre à jour les coordonnées du cube
         function updateCoordinates() {
             const coordinatesDiv = document.getElementById('coordinates');
             coordinatesDiv.innerText = `Cube Position: (${cube.position.x.toFixed(2)}, ${cube.position.y.toFixed(2)}, ${cube.position.z.toFixed(2)})`;
         }
 
-               // Boucle d'animation
+        // Boucle d'animation
         function animate() {
             requestAnimationFrame(animate);
 
@@ -179,9 +149,16 @@
             if (isJumping) {
                 cube.position.y += velocityY;
                 velocityY -= gravity;
+                if (cube.position.y <= 0.5) {
+                    cube.position.y = 0.5;
+                    velocityY = 0;
+                    isJumping = false;
+                }
             }
 
-            // Recentre la caméra sur le cube
+            // Faire suivre la caméra au cube
+            camera.position.x = cube.position.x;
+            camera.position.z = cube.position.z + 7;
             camera.lookAt(cube.position);
 
             // Mettre à jour les coordonnées du cube
