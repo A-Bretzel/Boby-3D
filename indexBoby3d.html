@@ -201,12 +201,12 @@
 
             // Faire suivre la caméra au cube
             const distance = 7;
-            camera.position.x = cube.position.x + distance * Math.sin(rotationY);
-            camera.position.z = cube.position.z + distance * Math.cos(rotationY);
+            camera.position.x = cube.position.x - distance * Math.sin(rotationY);
+            camera.position.z = cube.position.z - distance * Math.cos(rotationY);
             camera.position.y = cube.position.y + distance * Math.sin(rotationX);
 
             // Faire tourner le cube pour qu'il regarde toujours dans la direction de la caméra
-            cube.rotation.y = -rotationY;
+            cube.rotation.y = rotationY;
 
             // Recentre la caméra sur le cube
             camera.lookAt(cube.position);
