@@ -67,6 +67,14 @@
         light.position.set(10, 10, 10);
         scene.add(light);
 
+        // Ajouter une flèche devant le cube
+        const arrowGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1, 8);
+        const arrowMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // Couleur rouge
+        const arrow = new THREE.Mesh(arrowGeometry, arrowMaterial);
+        arrow.rotation.x = Math.PI / 2; // Rotation pour que la flèche soit horizontale
+        arrow.position.set(0, 0.5, -1); // Positionner la flèche devant le cube
+        cube.add(arrow); // Ajouter la flèche comme enfant du cube pour qu'elle suive ses mouvements
+
         // Variables pour le déplacement et le saut du cube
         let moveForward = false;
         let moveBackward = false;
