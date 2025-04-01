@@ -183,10 +183,10 @@
             requestAnimationFrame(animate);
 
             // Déplacement du cube
-            if (moveForward) cube.position.z -= 0.1;
-            if (moveBackward) cube.position.z += 0.1;
-            if (moveLeft) cube.position.x -= 0.1;
-            if (moveRight) cube.position.x += 0.1;
+            if (moveForward) cube.translateZ(-0.1);
+            if (moveBackward) cube.translateZ(0.1);
+            if (moveLeft) cube.translateX(-0.1);
+            if (moveRight) cube.translateX(0.1);
 
             // Saut et gravité
             if (isJumping) {
@@ -204,6 +204,9 @@
             camera.position.x = cube.position.x + distance * Math.sin(rotationY);
             camera.position.z = cube.position.z + distance * Math.cos(rotationY);
             camera.position.y = cube.position.y + distance * Math.sin(rotationX);
+
+            // Faire tourner le cube pour qu'il regarde toujours dans la direction de la caméra
+            cube.rotation.y = -rotationY;
 
             // Recentre la caméra sur le cube
             camera.lookAt(cube.position);
