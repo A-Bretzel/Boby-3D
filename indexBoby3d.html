@@ -62,17 +62,7 @@
         gridHelper.position.y = 0.01; // Légèrement au-dessus du sol pour être visible
         scene.add(gridHelper);
 
-        // Ajouter des plateformes
-        const platformGeometry = new THREE.BoxGeometry(5, 0.2, 5);
-        const platformMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 }); // Couleur verte
-        const platform1 = new THREE.Mesh(platformGeometry, platformMaterial);
-        platform1.position.set(5, 1, 5);
-        scene.add(platform1);
-
-        const platform2 = new THREE.Mesh(platformGeometry, platformMaterial);
-        platform2.position.set(-5, 1, -5);
-        scene.add(platform2);
-
+        
         // Variables pour le déplacement et le saut du cube
         let moveForward = false;
         let moveBackward = false;
@@ -175,37 +165,7 @@
             coordinatesDiv.innerText = `Cube Position: (${cube.position.x.toFixed(2)}, ${cube.position.y.toFixed(2)}, ${cube.position.z.toFixed(2)})`;
         }
 
-        // Fonction pour vérifier les collisions avec les plateformes
-        function checkCollisions() {
-            if (cube.position.y <= 0.5) {
-                cube.position.y = 0.5;
-                isJumping = false;
-                isOnPlatform = false;
-            } else {
-                const platforms = [platform1, platform2];
-                let onPlatform = false;
-
-                for (const platform of platforms) {
-                    if (
-                        cube.position.y <= platform.position.y + 0.6 &&
-                        cube.position.x >= platform.position.x - 2.5 &&
-                        cube.position.x <= platform.position.x + 2.5 &&
-                        cube.position.z >= platform.position.z - 2.5 &&
-                        cube.position.z <= platform.position.z + 2.5
-                    ) {
-                        if (velocityY < 0) {
-                            cube.position.y = platform.position.y + 0.6;
-                            isJumping = false;
-                            onPlatform = true;
-                        }
-                    }
-                }
-
-                isOnPlatform = onPlatform;
-            }
-        }
-
-        // Boucle d'animation
+               // Boucle d'animation
         function animate() {
             requestAnimationFrame(animate);
 
@@ -219,32 +179,6 @@
             if (isJumping) {
                 cube.position.y += velocityY;
                 velocityY -= gravity;
-            }
-
-            // Vérifier les collisions
-            checkCollisions();
-
-            // Tomber des plateformes
-            if (isOnPlatform && !isJumping && velocityY === 0) {
-                const platforms = [platform1, platform2];
-                let stillOnPlatform = false;
-
-                for (const platform of platforms) {
-                    if (
-                        cube.position.x >= platform.position.x - 2.5 &&
-                        cube.position.x <= platform.position.x + 2.5 &&
-                        cube.position.z >= platform.position.z - 2.5 &&
-                        cube.position.z <= platform.position.z + 2.5
-                    ) {
-                        stillOnPlatform = true;
-                        break;
-                    }
-                }
-
-                if (!stillOnPlatform) {
-                    isOnPlatform = false;
-                    isJumping = true;
-                }
             }
 
             // Recentre la caméra sur le cube
