@@ -62,7 +62,11 @@
         gridHelper.position.y = 0.01; // Légèrement au-dessus du sol pour être visible
         scene.add(gridHelper);
 
-        
+        // Ajouter une lumière
+        const light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(10, 10, 10);
+        scene.add(light);
+
         // Variables pour le déplacement et le saut du cube
         let moveForward = false;
         let moveBackward = false;
@@ -72,7 +76,6 @@
         let velocityY = 0;
         const gravity = 0.02;
         const jumpStrength = 0.3;
-        let isOnPlatform = false;
 
         // Variables pour le contrôle de la caméra avec la souris
         let isMouseDown = false;
@@ -95,7 +98,7 @@
                     moveRight = true;
                     break;
                 case 'Space':
-                    if (!isJumping) {
+                    if (!isJumping && cube.position.y <= 0.5) {
                         isJumping = true;
                         velocityY = jumpStrength;
                     }
@@ -105,7 +108,6 @@
                     cube.position.set(0, 0.5, 0);
                     velocityY = 0;
                     isJumping = false;
-                    isOnPlatform = false;
                     break;
             }
         });
@@ -165,7 +167,7 @@
             coordinatesDiv.innerText = `Cube Position: (${cube.position.x.toFixed(2)}, ${cube.position.y.toFixed(2)}, ${cube.position.z.toFixed(2)})`;
         }
 
-               // Boucle d'animation
+        // Boucle d'animation
         function animate() {
             requestAnimationFrame(animate);
 
@@ -179,6 +181,11 @@
             if (isJumping) {
                 cube.position.y += velocityY;
                 velocityY -= gravity;
+                if (cube.position.y <= 0.5) {
+                    cube.position.y = 0.5;
+                    velocityY = 0;
+                    isJumping = false;
+                }
             }
 
             // Recentre la caméra sur le cube
