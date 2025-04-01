@@ -158,12 +158,6 @@
                 // Limiter l'angle de rotation vertical
                 rotationX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, rotationX));
 
-                // Mettre à jour la position de la caméra
-                const distance = 7;
-                camera.position.x = cube.position.x + distance * Math.sin(rotationY);
-                camera.position.z = cube.position.z + distance * Math.cos(rotationY);
-                camera.position.y = cube.position.y + distance * Math.sin(rotationX);
-
                 // Mettre à jour la position précédente de la souris
                 previousMouseX = event.clientX;
                 previousMouseY = event.clientY;
@@ -198,6 +192,12 @@
             }
 
             // Faire suivre la caméra au cube
+            const distance = 7;
+            camera.position.x = cube.position.x + distance * Math.sin(rotationY);
+            camera.position.z = cube.position.z + distance * Math.cos(rotationY);
+            camera.position.y = cube.position.y + distance * Math.sin(rotationX);
+
+            // Recentre la caméra sur le cube
             camera.lookAt(cube.position);
 
             // Mettre à jour les coordonnées du cube
