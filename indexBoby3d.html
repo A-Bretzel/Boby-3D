@@ -77,6 +77,13 @@
         const gravity = 0.02;
         const jumpStrength = 0.3;
 
+        // Variables pour le contrôle de la caméra avec la souris
+        let isMouseDown = false;
+        let previousMouseX = 0;
+        let previousMouseY = 0;
+        let rotationX = 0;
+        let rotationY = 0;
+
         // Écouteurs d'événements pour les touches
         document.addEventListener('keydown', (event) => {
             switch (event.code) {
@@ -107,7 +114,8 @@
                 case 'KeyC':
                     // Réinitialiser la position de la caméra
                     camera.position.copy(initialCameraPosition);
-                    camera.lookAt(cube.position);
+                    rotationX = 0;
+                    rotationY = 0;
                     break;
             }
         });
@@ -126,6 +134,39 @@
                 case 'ArrowRight':
                     moveRight = false;
                     break;
+            }
+        });
+
+        // Écouteurs d'événements pour la souris
+        document.addEventListener('mousedown', () => {
+            isMouseDown = true;
+        });
+
+        document.addEventListener('mouseup', () => {
+            isMouseDown = false;
+        });
+
+        document.addEventListener('mousemove', (event) => {
+            if (isMouseDown) {
+                const deltaX = event.clientX - previousMouseX;
+                const deltaY = event.clientY - previousMouseY;
+
+                // Mettre à jour les angles de rotation
+                rotationX += deltaY * 0.01;
+                rotationY += deltaX * 0.01;
+
+                // Limiter l'angle de rotation vertical
+                rotationX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, rotationX));
+
+                // Mettre à jour la position de la caméra
+                const distance = 7;
+                camera.position.x = cube.position.x + distance * Math.sin(rotationY);
+                camera.position.z = cube.position.z + distance * Math.cos(rotationY);
+                camera.position.y = cube.position.y + distance * Math.sin(rotationX);
+
+                // Mettre à jour la position précédente de la souris
+                previousMouseX = event.clientX;
+                previousMouseY = event.clientY;
             }
         });
 
@@ -157,8 +198,6 @@
             }
 
             // Faire suivre la caméra au cube
-            camera.position.x = cube.position.x;
-            camera.position.z = cube.position.z + 7;
             camera.lookAt(cube.position);
 
             // Mettre à jour les coordonnées du cube
