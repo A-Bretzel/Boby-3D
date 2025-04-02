@@ -50,6 +50,12 @@
         cube.position.y = 0.5; // Positionner le cube au-dessus du sol
         scene.add(cube);
 
+        // Ajouter les arêtes noires au cube
+        const edgesGeometry = new THREE.EdgesGeometry(geometry);
+        const edgesMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
+        const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
+        cube.add(edges);
+
         // Ajouter un sol
         const floorGeometry = new THREE.PlaneGeometry(100, 100);
         const floorMaterial = new THREE.MeshBasicMaterial({ color: 0x8B4513, side: THREE.DoubleSide }); // Couleur marron
@@ -66,14 +72,6 @@
         const light = new THREE.PointLight(0xffffff, 1, 100);
         light.position.set(10, 10, 10);
         scene.add(light);
-
-        // Ajouter une flèche devant le cube
-        const arrowGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1, 8);
-        const arrowMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // Couleur rouge
-        const arrow = new THREE.Mesh(arrowGeometry, arrowMaterial);
-        arrow.rotation.x = Math.PI / 2; // Rotation pour que la flèche soit horizontale
-        arrow.position.set(0, 0.5, -1); // Positionner la flèche devant le cube
-        cube.add(arrow); // Ajouter la flèche comme enfant du cube pour qu'elle suive ses mouvements
 
         // Variables pour le déplacement et le saut du cube
         let moveForward = false;
@@ -172,10 +170,10 @@
             }
         });
 
-        // Fonction pour mettre à jour les coordonnées du cube
+        // Fonction pour mettre à jour les coordonnées du cube et l'angle de la caméra
         function updateCoordinates() {
             const coordinatesDiv = document.getElementById('coordinates');
-            coordinatesDiv.innerText = `Cube Position: (${cube.position.x.toFixed(2)}, ${cube.position.y.toFixed(2)}, ${cube.position.z.toFixed(2)})`;
+            coordinatesDiv.innerHTML = `Cube Position: (${cube.position.x.toFixed(2)}, ${cube.position.y.toFixed(2)}, ${cube.position.z.toFixed(2)})<br>Camera Angle: (${(rotationX * (180 / Math.PI)).toFixed(2)}°, ${(rotationY * (180 / Math.PI)).toFixed(2)}°)<br>Commands:<br>- Arrows: Move<br>- Space: Jump<br>- R: Reset Cube<br>- C: Reset Camera`;
         }
 
         // Boucle d'animation
@@ -211,7 +209,7 @@
             // Recentre la caméra sur le cube
             camera.lookAt(cube.position);
 
-            // Mettre à jour les coordonnées du cube
+            // Mettre à jour les coordonnées du cube et l'angle de la caméra
             updateCoordinates();
 
             renderer.render(scene, camera);
