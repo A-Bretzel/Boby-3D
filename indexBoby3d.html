@@ -206,7 +206,7 @@
             camera.position.y = cube.position.y + distance * Math.sin(rotationX);
 
             // Faire tourner le cube pour qu'il regarde toujours vers le joueur
-            cube.rotation.y = rotationY + Math.PI;
+            cube.rotation.y = rotationY + 180;
 
             // Recentre la caméra sur le cube
             camera.lookAt(cube.position);
