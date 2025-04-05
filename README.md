@@ -9,6 +9,7 @@
 
 # Informations inmportantes concernant le jeu
 Le jeu est en javascript basé sur la librarairie Three.js
+
 Je ne suis pas très expérimenté allors soyez pas trop dur
 Le cube tourne quand on tourne la caméra pour que ce soit plus pratique, mais ela est mal codé et je n'arrive pas à le résoudre. Il y a donc un très légé drift.
 
